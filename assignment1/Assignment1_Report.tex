@@ -7,12 +7,13 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{titlesec}
+\usepackage{float}
 
 \titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
 \titleformat{\subsection}{\bfseries\color{blue!60!black}}{\thesubsection}{1em}{}
 
-\title{\Large\bfseries Solving the K-Armed Bandit Problem Using\\Reinforcement Learning}
-\author{Assignment 1 Report \\ Gaurav Prakash \\ MSAI 635, Reinforcement Learning}
+\title{\Large\bfseries MSAI-635 Assignment 1: K-Armed Bandit Problem}
+\author{Gaurav Prakash \\ UID: 122250130}
 \date{}
 
 \begin{document}
@@ -20,18 +21,18 @@
 \maketitle
 
 \section{Problem Formulation}
-The k-armed bandit is a single-state reinforcement learning problem used to study the
-exploration-exploitation tradeoff in isolation. At each time step $t$, an agent selects one
-of $k = 10$ arms (actions). Each arm $a$ has a true, fixed action value $q_*(a)$ drawn once
-at the start of a run from $\mathcal{N}(0, 1)$. Selecting arm $a$ returns a stochastic reward
-$R \sim \mathcal{N}(q_*(a), 1)$. The agent does not know $q_*(a)$ and must estimate it online
-from observed rewards while trying to maximize cumulative reward over 1000 steps. Because the
-reward is noisy and the true values are unknown, the agent faces a fundamental decision at
-every step: exploit the action that currently looks best, or explore other actions to improve
-its estimates and potentially find a better one. Performance is measured with two metrics,
-averaged over 200 independent runs (each with freshly sampled $q_*(a)$): the average reward at
-each step, and the percentage of runs in which the optimal action $a^* = \arg\max_a q_*(a)$
-was selected.
+K-armed bandit is a single-state RL problem used to study the
+exploration-exploitation tradeoff in isolation. 
+
+
+At each time step $t$, an agent selects one of $k = 10$ arms (actions). Each arm $a$ has a true, fixed action value $q_*(a)$ drawn once at the start of a run from $\mathcal{N}(0, 1)$. Selecting arm $a$ returns a stochastic reward $R \sim \mathcal{N}(q_*(a), 1)$. The agent does not know $q_*(a)$ and must estimate it online from observed rewards while trying to maximize cumulative reward over 1000 steps. As a result of these unknown true values, the agent faces a fundamental decision at every step: \textbf{exploit the action that currently looks best, or explore other actions to improve
+its estimates and potentially find a better one}. 
+
+
+% Performance is measured with two metrics,
+% averaged over 200 independent runs (each with freshly sampled $q_*(a)$): the average reward at
+% each step, and the percentage of runs in which the optimal action $a^* = \arg\max_a q_*(a)$
+% was selected.
 
 \section{Methodology}
 
@@ -52,15 +53,9 @@ instead of the greedy one. Three settings were evaluated: $\varepsilon = 0.0$ (e
 
 \subsection{Effect of exploration on learning performance}
 Because all $Q(a)$ start at zero, the agent's early choices are driven almost entirely by
-sampling noise in the first few rewards rather than by the true action values. Exploration
-($\varepsilon > 0$) forces the agent to keep sampling arms it has not settled on, which
-corrects these early, noisy estimates over time and lets the true optimal arm's higher
-average reward eventually stand out from the noise. This directly improves long-run learning
-performance: both $\varepsilon$-greedy agents keep raising their \% optimal-action and
-average-reward curves throughout the full 1000 steps, whereas an agent with no exploration
-stops learning about arms it has abandoned. The cost of exploration is short-term: every
-exploratory step has an expected reward equal to the average of all arms rather than the best
-one, so more exploration trades away some immediate reward for better long-run action-value
+sampling noise in the first few rewards rather than by the true action values. It directly improves long-run learning
+performance: both $\varepsilon$-greedy agents keep raising their \% optimal-action and average-reward curves throughout the full 1000 steps, whereas an agent with no exploration stops learning about arms it has abandoned. The cost of exploration is short-term: every
+exploratory step has an expected reward equal to the average of all arms rather than the best one, so more exploration trades away some immediate reward for better long-run action-value
 estimates.
 
 \subsection{Why purely greedy action selection can perform poorly}
@@ -68,8 +63,7 @@ A purely greedy agent ($\varepsilon = 0$) commits to whichever arm happens to lo
 only a handful of samples. Once an arm's estimate is the highest, the greedy rule keeps
 selecting it, which means only that arm's estimate continues to be refined --- every other
 arm's estimate is frozen at whatever noisy value it received early on, even if its true value
-is higher. If the actual best arm was undersampled or unlucky early, its estimate never gets
-the chance to catch up, and the agent locks in on a suboptimal action for the rest of the run.
+is higher. 
 This is visible directly in our results (Section~4): the greedy agent's \% optimal-action
 curve flattens almost immediately, around step 100--200, and stays flat for the remaining
 800+ steps because it has stopped gathering any new information.
@@ -79,22 +73,17 @@ Exploitation maximizes expected reward given the agent's current (possibly wrong
 exploration sacrifices some immediate expected reward to gather information that can improve
 future decisions. $\varepsilon$ directly parameterizes this tradeoff: $\varepsilon = 0$ is
 pure exploitation and risks permanently locking onto a suboptimal arm; a very large
-$\varepsilon$ would be almost pure exploration and would rarely capitalize on what it learns,
-capping average reward well below the optimal arm's true value even after the optimal arm is
-correctly identified. A well-chosen, moderate $\varepsilon$ spends enough steps exploring to
-reliably identify the best arm, while still spending most steps exploiting it once found ---
-this is why $\varepsilon$-greedy with a small, nonzero $\varepsilon$ strictly dominates pure
-greedy action selection in this experiment, and why the specific value of $\varepsilon$
-matters (Section~5).
+$\varepsilon$ would be almost pure exploration and would rarely capitalize on what it learns, capping a lower average reward even after identifying the optimal arm. A small, nonzero value for $\varepsilon$ strictly dominates pure
+greedy action selection in this experiment.
 
 \section{Experimental Setup}
 Each of the three agents (Greedy, $\varepsilon$-greedy with $\varepsilon = 0.01$,
 $\varepsilon$-greedy with $\varepsilon = 0.1$) was evaluated on a $k = 10$ armed bandit for
-1000 time steps per run, averaged over 200 independent runs, each with a freshly sampled set
-of true action values $q_*(a) \sim \mathcal{N}(0, 1)$ and independent reward noise.
+1000 time steps per run, averaged over 200 independent runs
 Implementation: Python 3, NumPy for sampling and vectorized averaging, Matplotlib for plotting
 (\texttt{bandit.py}, \texttt{agents.py}, \texttt{experiment.py}). At each checkpoint step, the
-average reward and percentage of optimal-action selections across the 200 runs were recorded:
+average reward and percentage of optimal-action selections across the 200 runs were recorded
+
 
 \begin{table}[h]
 \centering
@@ -116,9 +105,10 @@ Step & \multicolumn{2}{c}{Greedy} & \multicolumn{2}{c}{$\varepsilon=0.01$} & \mu
 \caption{Average reward and \% optimal-action selection at checkpoint steps, averaged over 200 runs.}
 \end{table}
 
+\clearpage
 \section{Plots}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{epsilon_greedy_agent_performance.png}
 \caption{Average reward (top) and \% optimal-action selection (bottom) vs. time step, for
@@ -126,27 +116,20 @@ Greedy ($\varepsilon=0.0$), $\varepsilon$-greedy ($\varepsilon=0.01$), and $\var
 ($\varepsilon=0.1$), each averaged over 200 independent runs of 1000 steps.}
 \end{figure}
 
+\clearpage
 \section{Discussion}
 
 \subsection{Comparison of epsilon values}
 The three agents separate clearly on both metrics. Greedy ($\varepsilon = 0.0$) rises fastest
-in the first \textasciitilde50 steps but then plateaus almost completely: \% optimal action
-flattens at \textasciitilde38\% and average reward stalls around 1.0--1.1 for the rest of the
+in the first 50 steps but then plateaus almost completely: \% optimal action
+flattens at 32.5\% and average reward stalls around 0.9--1.1 for the rest of the
 run, since the agent stops exploring once an early estimate looks best. $\varepsilon$-greedy
 with $\varepsilon = 0.01$ explores rarely, so it improves slowly but steadily, still climbing
-at step 1000 (\textasciitilde54.5\% optimal action, average reward \textasciitilde1.32)
+at step 1000 (58.0\% optimal action, average reward 1.33)
 without having converged. $\varepsilon$-greedy with $\varepsilon = 0.1$ explores far more
 aggressively and consequently identifies the optimal arm much faster, reaching
-\textasciitilde85\% optimal action and the highest average reward
-(\textasciitilde1.36--1.55 in the later steps) within the 1000-step budget.
-
-\subsection{Why greedy performs poorly here}
-The flat blue line in Figure~1 is a direct, visible symptom of the greedy method's core flaw
-described in Section~2: once it exploits an early-favored arm, it never revisits its estimates
-for the other nine arms, so it cannot recover if that arm is not actually optimal. Its 38\%
-optimal-action rate implies that in the majority of the 200 runs, the greedy agent locked onto
-the wrong arm and stayed there for the entire episode --- a purely structural limitation, not
-a result of insufficient steps.
+81.0\% optimal action and the highest average reward
+(1.32--1.58 in the later steps) within the 1000-step budget.
 
 \subsection{Which epsilon performed best, and why}
 Within this experiment's 1000-step horizon, $\varepsilon = 0.1$ performed best, achieving both
@@ -173,10 +156,6 @@ refreshing action-value estimates, at the cost of some reward being spent on exp
 non-greedy actions. That cost is precisely the exploration-exploitation tradeoff: more
 exploration ($\varepsilon = 0.1$) finds the optimal arm faster and won this 1000-step
 comparison, while less exploration ($\varepsilon = 0.01$) wastes less reward long-term but
-needs a much longer horizon to pay off. In practice this suggests that a fixed $\varepsilon$
-is itself a compromise --- a decaying $\varepsilon$ (high early for fast identification, low
-later for reward maximization), optimistic initial values, or upper-confidence-bound (UCB)
-action selection would let an agent capture the fast convergence benefit of high exploration
-early on without permanently paying its long-run cost.
+needs a much longer horizon to pay off.
 
 \end{document}
