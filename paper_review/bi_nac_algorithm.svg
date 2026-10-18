@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5B616B"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#FFFFFF"/>
+
+  <text x="80" y="66" font-size="38" font-weight="700" fill="#1F2328">Bi-NAC: one training iteration</text>
+
+  <!-- Section label -->
+  <text x="85" y="128" font-size="20" font-weight="700" fill="#8A9099" letter-spacing="1.5">TWO-TURN ROLLOUT</text>
+
+  <!-- Rollout boxes: x = 85, 385, 685, 985, 1285 ; y 145..305 -->
+  <rect x="85" y="145" width="230" height="160" rx="14" fill="#F5F5F3" stroke="#D6D6D2" stroke-width="2"/>
+  <text x="200" y="210" text-anchor="middle" font-size="28" font-weight="700" fill="#1F2328">Prompt</text>
+  <text x="200" y="250" text-anchor="middle" font-size="24" fill="#5B616B" font-style="italic">x ~ 𝒟</text>
+
+  <rect x="385" y="145" width="230" height="160" rx="14" fill="#E9F1FE" stroke="#2F6FEB" stroke-width="2.5"/>
+  <text x="500" y="195" text-anchor="middle" font-size="28" font-weight="700" fill="#1A4FB8">Actor<tspan font-size="20" dx="6">π</tspan><tspan font-size="14" dy="6">θ</tspan></text>
+  <text x="500" y="240" text-anchor="middle" font-size="21" fill="#1F2328">first attempt</text>
+  <text x="500" y="275" text-anchor="middle" font-size="24" fill="#1F2328" font-style="italic">y₀</text>
+
+  <rect x="685" y="145" width="230" height="160" rx="14" fill="#FFF3E6" stroke="#E07B00" stroke-width="2.5"/>
+  <text x="800" y="195" text-anchor="middle" font-size="28" font-weight="700" fill="#A85A00">Critic<tspan font-size="20" dx="6">π</tspan><tspan font-size="14" dy="6">φ</tspan></text>
+  <text x="800" y="240" text-anchor="middle" font-size="21" fill="#1F2328">textual feedback</text>
+  <text x="800" y="275" text-anchor="middle" font-size="24" fill="#1F2328" font-style="italic">z</text>
+
+  <rect x="985" y="145" width="230" height="160" rx="14" fill="#E9F1FE" stroke="#2F6FEB" stroke-width="2.5"/>
+  <text x="1100" y="195" text-anchor="middle" font-size="28" font-weight="700" fill="#1A4FB8">Actor<tspan font-size="20" dx="6">π</tspan><tspan font-size="14" dy="6">θ</tspan></text>
+  <text x="1100" y="240" text-anchor="middle" font-size="21" fill="#1F2328">refined answer</text>
+  <text x="1100" y="275" text-anchor="middle" font-size="24" fill="#1F2328" font-style="italic">y₁</text>
+
+  <rect x="1285" y="145" width="230" height="160" rx="14" fill="#EAF6EC" stroke="#2E8B47" stroke-width="2.5"/>
+  <text x="1400" y="210" text-anchor="middle" font-size="28" font-weight="700" fill="#1E6B34">Verifier</text>
+  <text x="1400" y="250" text-anchor="middle" font-size="22" fill="#1F2328" font-style="italic">R(x, y₁) ∈ {0, 1}</text>
+
+  <!-- Rollout arrows -->
+  <line x1="317" y1="225" x2="381" y2="225" stroke="#5B616B" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="617" y1="225" x2="681" y2="225" stroke="#5B616B" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="917" y1="225" x2="981" y2="225" stroke="#5B616B" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="1217" y1="225" x2="1281" y2="225" stroke="#5B616B" stroke-width="2.5" marker-end="url(#arr)"/>
+  <text x="649" y="212" text-anchor="middle" font-size="17" fill="#5B616B" font-style="italic">x, y₀</text>
+  <text x="949" y="212" text-anchor="middle" font-size="17" fill="#5B616B" font-style="italic">x, y₀, z</text>
+
+  <!-- Reward fan-out -->
+  <line x1="1400" y1="307" x2="1400" y2="370" stroke="#2E8B47" stroke-width="2.5"/>
+  <line x1="430" y1="370" x2="1400" y2="370" stroke="#2E8B47" stroke-width="2.5"/>
+  <line x1="430" y1="370" x2="430" y2="436" stroke="#2E8B47" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="1170" y1="370" x2="1170" y2="436" stroke="#2E8B47" stroke-width="2.5" marker-end="url(#arr)"/>
+  <rect x="700" y="354" width="200" height="32" fill="#FFFFFF"/>
+  <text x="800" y="378" text-anchor="middle" font-size="20" font-weight="600" fill="#1E6B34">reward R(x, y₁)</text>
+
+  <!-- Step 1: actor update -->
+  <rect x="85" y="440" width="690" height="290" rx="14" fill="#F7FAFF" stroke="#2F6FEB" stroke-width="2.5"/>
+  <text x="115" y="490" font-size="28" font-weight="700" fill="#1A4FB8">① Update actor θ  (lower level, follower)</text>
+  <text x="115" y="545" font-size="23" fill="#1F2328">g<tspan font-size="16" dy="6">θ</tspan><tspan dy="-6"> = (1+λ) · R(x, y₁) ·</tspan></text>
+  <text x="145" y="585" font-size="23" fill="#1F2328">∇<tspan font-size="16" dy="6">θ</tspan><tspan dy="-6"> [ log π</tspan><tspan font-size="16" dy="6">θ</tspan><tspan dy="-6">(y₀ | x) + log π</tspan><tspan font-size="16" dy="6">θ</tspan><tspan dy="-6">(y₁ | x, y₀, z) ]</tspan></text>
+  <text x="115" y="635" font-size="23" fill="#1F2328">θ ← θ + α<tspan font-size="16" dy="6">θ</tspan><tspan dy="-6"> · g</tspan><tspan font-size="16" dy="6">θ</tspan></text>
+  <text x="115" y="690" font-size="20" fill="#5B616B">Plain policy gradient on both turns:</text>
+  <text x="115" y="716" font-size="20" fill="#5B616B">the actor learns to use the critic’s feedback</text>
+
+  <!-- Step 2: critic update -->
+  <rect x="825" y="440" width="690" height="290" rx="14" fill="#FFFAF3" stroke="#E07B00" stroke-width="2.5"/>
+  <text x="855" y="490" font-size="28" font-weight="700" fill="#A85A00">② Update critic φ  (upper level, leader)</text>
+  <text x="855" y="545" font-size="23" fill="#1F2328">G₁ = (1+λ) · R(x, y₁) · ∇<tspan font-size="16" dy="6">φ</tspan><tspan dy="-6"> log π</tspan><tspan font-size="16" dy="6">φ</tspan><tspan dy="-6">(z | x, y₀)</tspan></text>
+  <text x="855" y="585" font-size="23" fill="#1F2328">G₂ = λ · R(x, y₁*) · ∇<tspan font-size="16" dy="6">φ</tspan><tspan dy="-6"> log π</tspan><tspan font-size="16" dy="6">φ</tspan><tspan dy="-6">(z | x, y₀*)</tspan></text>
+  <text x="855" y="635" font-size="23" fill="#1F2328">φ ← φ + α<tspan font-size="16" dy="6">φ</tspan><tspan dy="-6"> · (G₁ − G₂)</tspan></text>
+  <text x="855" y="690" font-size="20" fill="#5B616B">G₁: rollouts from the current actor θ</text>
+  <text x="855" y="716" font-size="20" fill="#5B616B">G₂: rollouts from a recent checkpoint θₖ ≈ θ*</text>
+
+  <!-- then arrow -->
+  <line x1="777" y1="585" x2="821" y2="585" stroke="#5B616B" stroke-width="2.5" marker-end="url(#arr)"/>
+
+  <!-- loop back -->
+  <path d="M1170,732 L1170,790 L430,790 L430,736" fill="none" stroke="#5B616B" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#arr)"/>
+  <rect x="640" y="774" width="320" height="32" fill="#FFFFFF"/>
+  <text x="800" y="798" text-anchor="middle" font-size="20" font-weight="600" fill="#5B616B">repeat each iteration</text>
+
+  <text x="80" y="868" font-size="17" fill="#8A9099">λ ≥ 0: Lagrange multiplier from the bilevel → penalty reformulation.  α: learning rates (actor 5e-6, critic 1e-4, LoRA r = 16).  Source: Singh et al., ICML 2026, Algorithm 1.</text>
+</svg>
